@@ -2,17 +2,25 @@ const mongoose = require('mongoose');
 
 const SplitSchema = new mongoose.Schema({
   type: {
-    type: String,
-    enum: ['100', '0', '50', 'custom'], // Allowed values
-    required: true,
-  },
-  mine: {
-    type: Number,
-    required: true,
-  },
-  other: {
-    type: Number,
-    required: true,
+    user: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    portion: {
+      type: String,
+      enum: ['100', '0', '50', 'custom'],
+      required: true,
+    },
+    kind: {
+      type: String,
+      enum: ['percentage', 'fix'],
+      required: true,
+    },
   },
 });
 
@@ -37,19 +45,23 @@ const TransactionSchema = new mongoose.Schema(
     category: {
       type: String,
     },
-    // split: {
-    //   type: SplitSchema,
-    //   required: true,
-    // },
-    // owner: {
-    //   type: mongoose.Types.ObjectId,
-    //   required: true,
-    //   ref: 'User',
-    // },
+    split: {
+      type: SplitSchema,
+    },
+    owner: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
     billStatement: {
       type: mongoose.Types.ObjectId,
       required: true,
       ref: 'BillStatement',
+    },
+    type: {
+      type: String,
+      enum: ['Debit', 'Credit'],
+      required: true,
     },
   },
   { timestamps: true }

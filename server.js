@@ -27,7 +27,6 @@ app.get('/api/transactions', async (req, res) => {
 
 app.post('/api/transactions', async (req, res) => {
   try {
-    console.log('Req body', req.body);
     const transactions = await Transaction.insertMany(req.body);
     res.json(transactions);
   } catch (error) {
@@ -38,9 +37,26 @@ app.post('/api/transactions', async (req, res) => {
 
 app.get('/api/bill-statements', async (req, res) => {
   try {
-    const billStatements = await BillStatement.find({});
-    const transactions = await Transaction.find({});
-    res.json({ data: billStatements });
+    // this is a huge aggregation look up checking for all transactions if we have users we should also check per user
+    const result = await BillStatement.aggregate([
+      {
+        $lookup: {
+          from: 'transactions',
+          localField: '_id',
+          foreignField: 'billStatement',
+          as: 'transactions',
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          nearestTransaction: { $min: '$transactions.date' },
+          furthestTransaction: { $max: '$transactions.date' },
+          transactionCount: { $size: '$transactions' },
+        },
+      },
+    ]);
+    res.json({ data: result });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
@@ -51,6 +67,20 @@ app.post('/api/bill-statements', async (req, res) => {
   try {
     const billStatement = await BillStatement.create({ title: req.body.title });
     res.json({ data: billStatement });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+app.get('/api/bill-statements/:id/transactions', async (req, res) => {
+  try {
+    const billStatement = await BillStatement.findById(req.params.id);
+    const transactions = await Transaction.find({
+      billStatement: req.params.id,
+    }).sort({ date: -1 });
+
+    res.json({ billStatement, transactions });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
