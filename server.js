@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const Transaction = require('./models/Transaction.model');
 const BillStatement = require('./models/BillStatement.model');
+const Group = require('./models/Group.model');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -81,6 +82,32 @@ app.get('/api/bill-statements/:id/transactions', async (req, res) => {
     }).sort({ date: -1 });
 
     res.json({ billStatement, transactions });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+app.get('/api/groups', async (req, res) => {
+  try {
+    const owner = '67281eae57e23c4dda65f10c'; //req.session._id
+    const groups = await Group.find({ owner }).sort({ _id: -1 });
+    res.json({ data: groups });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+app.post('/api/groups', async (req, res) => {
+  try {
+    const owner = '67281eae57e23c4dda65f10c'; //req.session._id
+    const group = await Group.create({
+      name: req.body.name,
+      members: req.body.members,
+      owner,
+    });
+    res.json({ data: group });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
