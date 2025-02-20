@@ -7,7 +7,9 @@ import billStatementRoutes from './routes/bill-statements.js';
 import groupRoutes from './routes/groups.js';
 import transactionRoutes from './routes/transactions.js';
 import authRoutes from './routes/auth.js';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
