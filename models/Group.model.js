@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const GroupModel = new mongoose.Schema({
   name: {
@@ -28,4 +28,4 @@ function arrayLimit(val) {
 
 const Group = mongoose.model('Group', GroupModel);
 
-module.exports = Group;
+export default Group;

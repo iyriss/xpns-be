@@ -1,12 +1,15 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const Transaction = require('./models/Transaction.model');
-const BillStatement = require('./models/BillStatement.model');
-const Group = require('./models/Group.model');
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import authMiddleware from './authMiddleware.js';
+import allocationRoutes from './routes/allocations.js';
+import billStatementRoutes from './routes/bill-statements.js';
+import groupRoutes from './routes/groups.js';
+import transactionRoutes from './routes/transactions.js';
+import authRoutes from './routes/auth.js';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 
 app.use(cors());
 app.use(express.json());
@@ -16,103 +19,11 @@ mongoose.connect('mongodb://localhost:27017/transactions-share', {
   useUnifiedTopology: true,
 });
 
-app.get('/api/transactions', async (req, res) => {
-  try {
-    const transactions = await Transaction.find();
-    res.json(transactions);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
-
-app.post('/api/transactions', async (req, res) => {
-  try {
-    const transactions = await Transaction.insertMany(req.body);
-    res.json(transactions);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
-
-app.get('/api/bill-statements', async (req, res) => {
-  try {
-    // this is a huge aggregation look up checking for all transactions if we have users we should also check per user
-    const result = await BillStatement.aggregate([
-      {
-        $lookup: {
-          from: 'transactions',
-          localField: '_id',
-          foreignField: 'billStatement',
-          as: 'transactions',
-        },
-      },
-      {
-        $project: {
-          title: 1,
-          nearestTransaction: { $min: '$transactions.date' },
-          furthestTransaction: { $max: '$transactions.date' },
-          transactionCount: { $size: '$transactions' },
-        },
-      },
-    ]);
-    res.json({ data: result });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
-
-app.post('/api/bill-statements', async (req, res) => {
-  try {
-    const billStatement = await BillStatement.create({ title: req.body.title });
-    res.json({ data: billStatement });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
-
-app.get('/api/bill-statements/:id/transactions', async (req, res) => {
-  try {
-    const billStatement = await BillStatement.findById(req.params.id);
-    const transactions = await Transaction.find({
-      billStatement: req.params.id,
-    }).sort({ date: -1 });
-
-    res.json({ billStatement, transactions });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
-
-app.get('/api/groups', async (req, res) => {
-  try {
-    const owner = '67281eae57e23c4dda65f10c'; //req.session._id
-    const groups = await Group.find({ owner }).sort({ _id: -1 });
-    res.json({ data: groups });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
-
-app.post('/api/groups', async (req, res) => {
-  try {
-    const owner = '67281eae57e23c4dda65f10c'; //req.session._id
-    const group = await Group.create({
-      name: req.body.name,
-      members: req.body.members,
-      owner,
-    });
-    res.json({ data: group });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
+app.use('/api/auth', authRoutes);
+app.use('/api/transactions', authMiddleware, transactionRoutes);
+app.use('/api/allocations', authMiddleware, allocationRoutes);
+app.get('/api/bill-statements', authMiddleware, billStatementRoutes);
+app.get('/api/groups', authMiddleware, groupRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

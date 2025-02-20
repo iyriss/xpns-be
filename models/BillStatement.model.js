@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-
+import mongoose from 'mongoose';
 const BillStatementSchema = new mongoose.Schema(
   {
     title: {
@@ -12,4 +11,4 @@ const BillStatementSchema = new mongoose.Schema(
 
 const BillStatement = mongoose.model('BillStatement', BillStatementSchema);
 
-module.exports = BillStatement;
+export default BillStatement;

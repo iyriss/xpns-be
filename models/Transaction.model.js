@@ -1,28 +1,4 @@
-const mongoose = require('mongoose');
-
-const SplitSchema = new mongoose.Schema({
-  type: {
-    user: {
-      type: mongoose.Types.ObjectId,
-      required: true,
-      ref: 'User',
-    },
-    amount: {
-      type: Number,
-      required: true,
-    },
-    portion: {
-      type: String,
-      enum: ['100', '0', '50', 'custom'],
-      required: true,
-    },
-    kind: {
-      type: String,
-      enum: ['percentage', 'fix'],
-      required: true,
-    },
-  },
-});
+import mongoose from 'mongoose';
 
 const TransactionSchema = new mongoose.Schema(
   {
@@ -45,8 +21,13 @@ const TransactionSchema = new mongoose.Schema(
     category: {
       type: String,
     },
-    split: {
-      type: SplitSchema,
+    group: {
+      type: mongoose.Types.ObjectId,
+      ref: 'Group',
+    },
+    allocation: {
+      type: mongoose.Types.ObjectId,
+      ref: 'Allocation',
     },
     owner: {
       type: mongoose.Types.ObjectId,
@@ -69,4 +50,4 @@ const TransactionSchema = new mongoose.Schema(
 
 const Transaction = mongoose.model('Transaction', TransactionSchema);
 
-module.exports = Transaction;
+export default Transaction;
