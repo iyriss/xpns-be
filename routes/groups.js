@@ -5,8 +5,8 @@ const router = Router();
 
 router.get('/api/groups', async (req, res) => {
   try {
-    const owner = '67281eae57e23c4dda65f10c'; //req.session._id
-    const groups = await Group.find({ owner }).sort({ _id: -1 });
+    const user = req.userId;
+    const groups = await Group.find({ user }).sort({ _id: -1 });
     res.json({ data: groups });
   } catch (error) {
     console.error(error);
@@ -16,11 +16,11 @@ router.get('/api/groups', async (req, res) => {
 
 router.post('/api/groups', async (req, res) => {
   try {
-    const owner = '67281eae57e23c4dda65f10c'; //req.session._id
+    const user = req.userId;
     const group = await Group.create({
       name: req.body.name,
       members: req.body.members,
-      owner,
+      user,
     });
     res.json({ data: group });
   } catch (error) {

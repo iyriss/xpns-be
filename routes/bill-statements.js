@@ -7,10 +7,13 @@ const router = Router();
 
 router.get('/', async (req, res) => {
   try {
-    const owner = req.userId;
-    console.log('owner', owner);
-    // this is a huge aggregation look up checking for all transactions if we have users we should also check per user
+    const user = req.userId;
     const result = await BillStatement.aggregate([
+      {
+        $match: {
+          user,
+        },
+      },
       {
         $lookup: {
           from: 'transactions',
@@ -37,25 +40,29 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const billStatement = await BillStatement.create({ title: req.body.title });
-    res.json({ data: billStatement });
+    const userId = req.userId;
+    const billStatement = new BillStatement({
+      title: req.body.title,
+      user: userId,
+    });
+
+    const savedBillStatement = await billStatement.save();
+    res.json({ data: savedBillStatement });
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ message: 'Bad Request' });
+    console.error('Error creating bill statement:', error);
+    res.status(400).json({ error: 'Failed to create bill statement' });
   }
 });
 
 router.get('/:id/transactions', async (req, res) => {
   try {
-    console.log('req.userId', req.userId);
-    const owner = req.userId;
-
+    const user = req.userId;
     const billStatement = await BillStatement.findById(req.params.id);
     const transactions = await Transaction.find({
       billStatement: req.params.id,
     }).sort({ date: -1 });
     const groups = await Group.find({
-      $or: [{ owner }, { members: owner }],
+      $or: [{ user }, { members: user }],
     }).sort({ _id: -1 });
 
     res.json({ data: { billStatement, transactions, groups } });

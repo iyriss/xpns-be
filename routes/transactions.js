@@ -5,7 +5,8 @@ const router = Router();
 
 router.get('/', async (req, res) => {
   try {
-    const transactions = await Transaction.find();
+    const user = req.userId;
+    const transactions = await Transaction.find({ user });
     res.json(transactions);
   } catch (error) {
     console.error(error);
@@ -16,6 +17,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const transactions = await Transaction.insertMany(req.body);
+    console.log('transactions', transactions);
     res.json(transactions);
   } catch (error) {
     console.error(error);
