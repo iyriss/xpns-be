@@ -3,11 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.model.js';
 import authMiddleware from '../authMiddleware.js';
-import {
-  generateAccessToken,
-  generateRefreshToken,
-  verifyRefreshToken,
-} from '../utils/token-helpers.js';
+import { generateAccessToken } from '../utils/token-helpers.js';
 
 const router = Router();
 
@@ -26,7 +22,6 @@ router.post('/login', async (req, res) => {
     }
 
     const token = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
 
     res.cookie('auth_token', token, {
       httpOnly: true,
@@ -36,37 +31,12 @@ router.post('/login', async (req, res) => {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
     });
 
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production' ? true : false,
-      sameSite: 'strict',
-      path: '/api/auth/refresh',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
-
     res.json({
       success: true,
       message: 'Login successful',
     });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
-  }
-});
-
-router.post('/refresh', (req, res) => {
-  const token = req.cookies.refreshToken;
-  if (!token) {
-    return res
-      .status(401)
-      .json({ success: false, message: 'No refresh token' });
-  }
-
-  try {
-    const user = verifyRefreshToken(token);
-    const newAccessToken = generateAccessToken(user);
-    res.json({ success: true, accessToken: newAccessToken });
-  } catch (err) {
-    res.status(403).json({ success: false, message: 'Invalid refresh token' });
   }
 });
 
