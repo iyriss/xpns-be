@@ -8,25 +8,30 @@ import groupRoutes from './routes/groups.js';
 import transactionRoutes from './routes/transactions.js';
 import authRoutes from './routes/auth.js';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.use(cors());
+mongoose.connect(process.env.MONGO_URI, {});
+
+app.use(
+  cors({
+    origin: process.env.BASE_URL,
+    credentials: true, //  Required for cookies to work
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  })
+);
 app.use(express.json());
-
-mongoose.connect('mongodb://localhost:27017/transactions-share', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
+app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', authMiddleware, transactionRoutes);
 app.use('/api/allocations', authMiddleware, allocationRoutes);
-app.get('/api/bill-statements', authMiddleware, billStatementRoutes);
-app.get('/api/groups', authMiddleware, groupRoutes);
+app.use('/api/bill-statements', authMiddleware, billStatementRoutes);
+app.use('/api/groups', authMiddleware, groupRoutes);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on ${process.env.BASE_URL}:${PORT}`);
 });

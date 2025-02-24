@@ -5,8 +5,10 @@ import Group from '../models/Group.model.js';
 
 const router = Router();
 
-router.get('/api/bill-statements', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
+    const owner = req.userId;
+    console.log('owner', owner);
     // this is a huge aggregation look up checking for all transactions if we have users we should also check per user
     const result = await BillStatement.aggregate([
       {
@@ -29,23 +31,24 @@ router.get('/api/bill-statements', async (req, res) => {
     res.json({ data: result });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(400).json({ message: 'Bad Request' });
   }
 });
 
-router.post('/api/bill-statements', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const billStatement = await BillStatement.create({ title: req.body.title });
     res.json({ data: billStatement });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(400).json({ message: 'Bad Request' });
   }
 });
 
-router.get('/api/bill-statements/:id/transactions', async (req, res) => {
+router.get('/:id/transactions', async (req, res) => {
   try {
-    const owner = '67281eae57e23c4dda65f10c'; //req.session._id
+    console.log('req.userId', req.userId);
+    const owner = req.userId;
 
     const billStatement = await BillStatement.findById(req.params.id);
     const transactions = await Transaction.find({
@@ -58,7 +61,7 @@ router.get('/api/bill-statements/:id/transactions', async (req, res) => {
     res.json({ data: { billStatement, transactions, groups } });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(400).json({ message: 'Bad Request' });
   }
 });
 

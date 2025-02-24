@@ -3,7 +3,7 @@ import Transaction from '../models/Transaction.model.js';
 
 const router = Router();
 
-router.get('/api/transactions', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const transactions = await Transaction.find();
     res.json(transactions);
@@ -13,7 +13,7 @@ router.get('/api/transactions', async (req, res) => {
   }
 });
 
-router.post('/api/transactions', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const transactions = await Transaction.insertMany(req.body);
     res.json(transactions);
