@@ -8,30 +8,8 @@ const router = Router();
 router.get('/', async (req, res) => {
   try {
     const user = req.userId;
-    const result = await BillStatement.aggregate([
-      {
-        $match: {
-          user,
-        },
-      },
-      {
-        $lookup: {
-          from: 'transactions',
-          localField: '_id',
-          foreignField: 'billStatement',
-          as: 'transactions',
-        },
-      },
-      {
-        $project: {
-          title: 1,
-          nearestTransaction: { $min: '$transactions.date' },
-          furthestTransaction: { $max: '$transactions.date' },
-          transactionCount: { $size: '$transactions' },
-        },
-      },
-    ]);
-    res.json({ data: result });
+    const billStatements = await BillStatement.find({ user }).sort({ _id: -1 });
+    res.json({ data: billStatements });
   } catch (error) {
     console.error(error);
     res.status(400).json({ message: 'Bad Request' });

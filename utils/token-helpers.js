@@ -11,7 +11,7 @@ export function generateAccessToken(user) {
       email: user.email,
     },
     process.env.JWT_SECRET,
-    { expiresIn: '15m' }
+    { expiresIn: '48h' }
   );
   console.log('Generated token:', token);
   return token;

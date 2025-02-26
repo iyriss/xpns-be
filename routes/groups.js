@@ -3,7 +3,7 @@ import Group from '../models/Group.model.js';
 
 const router = Router();
 
-router.get('/api/groups', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const user = req.userId;
     const groups = await Group.find({ user }).sort({ _id: -1 });
@@ -14,7 +14,7 @@ router.get('/api/groups', async (req, res) => {
   }
 });
 
-router.post('/api/groups', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const user = req.userId;
     const group = await Group.create({
