@@ -17,8 +17,21 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const transactions = await Transaction.insertMany(req.body);
-    console.log('transactions', transactions);
     res.json(transactions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  try {
+    const transaction = await Transaction.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    res.json({ data: transaction });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
