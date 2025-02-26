@@ -1,5 +1,26 @@
 import mongoose from 'mongoose';
 
+const AllocationSchema = new mongoose.Schema({
+  method: {
+    type: String,
+    enum: ['percentage', 'fixed'],
+    required: true,
+  },
+  members: [
+    {
+      user: {
+        type: mongoose.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
+      portion: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
+});
+
 const TransactionSchema = new mongoose.Schema(
   {
     description: {
@@ -26,8 +47,7 @@ const TransactionSchema = new mongoose.Schema(
       ref: 'Group',
     },
     allocation: {
-      type: mongoose.Types.ObjectId,
-      ref: 'Allocation',
+      type: AllocationSchema,
     },
     user: {
       type: mongoose.Types.ObjectId,
