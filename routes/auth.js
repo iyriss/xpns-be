@@ -58,14 +58,19 @@ router.post('/signup', async (req, res) => {
       name,
     });
 
-    // Create JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '30d',
+    const token = generateAccessToken(user);
+
+    res.cookie('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production' ? true : false,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
     });
 
-    return res.status(201).json({
-      userId: user._id.toString(),
-      token,
+    res.json({
+      success: true,
+      message: 'Signup successful',
     });
   } catch (error) {
     console.error('Server signup error:', error);
