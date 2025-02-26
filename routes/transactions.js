@@ -38,4 +38,16 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+router.get('/group/:id', async (req, res) => {
+  try {
+    const groupTransactions = await Transaction.find({
+      group: req.params.id,
+    });
+    res.json({ data: groupTransactions });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 export default router;

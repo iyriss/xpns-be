@@ -29,4 +29,22 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get('/:id', async (req, res) => {
+  try {
+    const group = await Group.findById(req.params.id)
+      .lean()
+      .select('name members user')
+      .populate('members', 'name');
+
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+
+    res.json({ data: group });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 export default router;

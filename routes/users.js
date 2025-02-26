@@ -5,8 +5,10 @@ const router = Router();
 
 router.get('/', async (req, res) => {
   try {
-    const users = await User.find();
-    const currentUser = users.find((u) => u._id.toString() === req.userId);
+    const [users, currentUser] = await Promise.all([
+      User.find().lean(),
+      User.findById(req.userId).lean(),
+    ]);
 
     res.json({ data: users, currentUser });
   } catch (error) {
