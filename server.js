@@ -33,5 +33,5 @@ app.use('/api/groups', authMiddleware, groupRoutes);
 app.use('/api/users', authMiddleware, userRoutes);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on ${process.env.BASE_URL}:${PORT}`);
+  console.log(`Server is running on ${process.env.BASE_URL}`);
 });
