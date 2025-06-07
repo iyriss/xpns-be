@@ -6,7 +6,15 @@ const router = Router();
 router.get('/', async (req, res) => {
   try {
     const user = req.userId;
-    const groups = await Group.find({ user }).sort({ _id: -1 });
+    const groups = await Group.find({
+      $or: [
+        { user }, // groups where user is owner
+        { members: user }, // groups where user is a member
+      ],
+    })
+      .sort({ _id: -1 })
+      .populate('members', 'name');
+
     res.json({ data: groups });
   } catch (error) {
     console.error(error);
