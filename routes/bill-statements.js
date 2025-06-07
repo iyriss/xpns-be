@@ -50,4 +50,14 @@ router.get('/:id/transactions', async (req, res) => {
   }
 });
 
+router.delete('/:id', async (req, res) => {
+  try {
+    const billStatement = await BillStatement.findByIdAndDelete(req.params.id);
+    res.json({ data: billStatement });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: 'Bad Request' });
+  }
+});
+
 export default router;
