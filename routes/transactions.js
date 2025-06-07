@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import Transaction from '../models/Transaction.model.js';
+import calculateSettlements from '../utils/settlements.js';
 
 const router = Router();
 
@@ -42,8 +43,13 @@ router.get('/group/:id', async (req, res) => {
   try {
     const groupTransactions = await Transaction.find({
       group: req.params.id,
-    });
-    res.json({ data: groupTransactions });
+    })
+      .sort({ date: -1 })
+      .populate('user allocation.members.user')
+      .lean();
+
+    const settlements = calculateSettlements(groupTransactions);
+    res.json({ data: { groupTransactions, settlements } });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
