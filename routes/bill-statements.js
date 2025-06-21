@@ -41,7 +41,9 @@ router.get('/:id/transactions', async (req, res) => {
     }).sort({ date: -1 });
     const groups = await Group.find({
       $or: [{ user }, { members: user }],
-    }).sort({ _id: -1 });
+    })
+      .populate('members')
+      .sort({ _id: -1 });
 
     res.json({ data: { billStatement, transactions, groups } });
   } catch (error) {

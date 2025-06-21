@@ -39,6 +39,29 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+router.put('/:id/ungroup', async (req, res) => {
+  try {
+    await Transaction.findByIdAndUpdate(req.params.id, {
+      $unset: { group: '' },
+    });
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  console.log('deleting transaction', req.params.id);
+  try {
+    await Transaction.deleteOne({ _id: req.params.id });
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: 'Could not delete transaction' });
+  }
+});
+
 router.get('/group/:id', async (req, res) => {
   try {
     const groupTransactions = await Transaction.find({
