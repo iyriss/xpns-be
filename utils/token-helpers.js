@@ -13,7 +13,6 @@ export function generateAccessToken(user) {
     process.env.JWT_SECRET,
     { expiresIn: '48h' }
   );
-  console.log('Generated token:', token);
   return token;
 }
 

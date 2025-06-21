@@ -52,7 +52,6 @@ router.put('/:id/ungroup', async (req, res) => {
 });
 
 router.delete('/:id', async (req, res) => {
-  console.log('deleting transaction', req.params.id);
   try {
     await Transaction.deleteOne({ _id: req.params.id });
     res.json({ success: true });
