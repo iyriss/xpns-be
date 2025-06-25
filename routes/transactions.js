@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     res.json(transactions);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(400).json({ message: 'Could not get transactions' });
   }
 });
 
@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
     res.json(transactions);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(400).json({ message: 'Could not create transactions' });
   }
 });
 
@@ -35,7 +35,7 @@ router.put('/:id', async (req, res) => {
     res.json({ data: transaction });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(400).json({ message: 'Could not update transaction' });
   }
 });
 
@@ -47,7 +47,7 @@ router.put('/:id/ungroup', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(400).json({ message: 'Could not ungroup transaction' });
   }
 });
 
@@ -74,7 +74,7 @@ router.get('/group/:id', async (req, res) => {
     res.json({ data: { groupTransactions, settlements } });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(400).json({ message: 'Could not get group transactions' });
   }
 });
 

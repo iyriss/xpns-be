@@ -7,6 +7,7 @@ import groupRoutes from './routes/groups.js';
 import transactionRoutes from './routes/transactions.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
+import categoryRoutes from './routes/categories.js';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 
@@ -31,7 +32,8 @@ app.use('/api/transactions', authMiddleware, transactionRoutes);
 app.use('/api/bill-statements', authMiddleware, billStatementRoutes);
 app.use('/api/groups', authMiddleware, groupRoutes);
 app.use('/api/users', authMiddleware, userRoutes);
+app.use('/api/categories', authMiddleware, categoryRoutes);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on ${process.env.BASE_URL}`);
+  console.log(`Server is running...`);
 });

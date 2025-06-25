@@ -45,6 +45,7 @@ const TransactionSchema = new mongoose.Schema(
     },
     category: {
       type: String,
+      ref: 'Category',
     },
     group: {
       type: mongoose.Types.ObjectId,

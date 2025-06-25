@@ -1,26 +1,29 @@
 import mongoose from 'mongoose';
 
-const GroupModel = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  user: {
-    type: mongoose.Types.ObjectId,
-    required: true,
-    ref: 'User',
-  },
-  members: [
-    {
+const GroupModel = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    user: {
       type: mongoose.Types.ObjectId,
       required: true,
       ref: 'User',
     },
-    {
-      validate: [arrayLimit, '{PATH} must have at least one user ID'],
-    },
-  ],
-});
+    members: [
+      {
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: 'User',
+      },
+      {
+        validate: [arrayLimit, '{PATH} must have at least one user ID'],
+      },
+    ],
+  },
+  { timestamps: true }
+);
 
 function arrayLimit(val) {
   return val.length > 0;
