@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
   try {
     const user = req.userId;
     const transactions = await Transaction.find({ user });
-    res.json(transactions);
+    res.json({ data: transactions, success: true });
   } catch (error) {
     console.error(error);
     res.status(400).json({ message: 'Could not get transactions' });
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const transactions = await Transaction.insertMany(req.body);
-    res.json(transactions);
+    res.json({ data: transactions, success: true });
   } catch (error) {
     console.error(error);
     res.status(400).json({ message: 'Could not create transactions' });
@@ -32,7 +32,7 @@ router.put('/:id', async (req, res) => {
       req.body,
       { new: true }
     );
-    res.json({ data: transaction });
+    res.json({ data: transaction, success: true });
   } catch (error) {
     console.error(error);
     res.status(400).json({ message: 'Could not update transaction' });

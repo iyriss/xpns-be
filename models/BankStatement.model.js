@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-const BillStatementSchema = new mongoose.Schema(
+const BankStatementSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -14,6 +14,6 @@ const BillStatementSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const BillStatement = mongoose.model('BillStatement', BillStatementSchema);
+const BankStatement = mongoose.model('BankStatement', BankStatementSchema);
 
-export default BillStatement;
+export default BankStatement;

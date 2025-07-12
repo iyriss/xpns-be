@@ -7,6 +7,7 @@ const CategorySchema = new mongoose.Schema(
       type: String,
       enum: [
         'essentials',
+        'home',
         'lifestyle',
         'wellness',
         'financial',

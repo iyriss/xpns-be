@@ -33,7 +33,6 @@ const TransactionSchema = new mongoose.Schema(
     },
     subdescription: {
       type: String,
-      required: true,
     },
     amount: {
       type: Number,
@@ -59,10 +58,10 @@ const TransactionSchema = new mongoose.Schema(
       required: true,
       ref: 'User',
     },
-    billStatement: {
+    bankStatement: {
       type: mongoose.Types.ObjectId,
       required: true,
-      ref: 'BillStatement',
+      ref: 'BankStatement',
     },
     type: {
       type: String,
