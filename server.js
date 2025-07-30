@@ -8,6 +8,7 @@ import transactionRoutes from './routes/transactions.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
 import categoryRoutes from './routes/categories.js';
+import mappingTemplateRoutes from './routes/mapping-templates.js';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 
@@ -33,6 +34,7 @@ app.use('/api/bank-statements', authMiddleware, bankStatementRoutes);
 app.use('/api/groups', authMiddleware, groupRoutes);
 app.use('/api/users', authMiddleware, userRoutes);
 app.use('/api/categories', authMiddleware, categoryRoutes);
+app.use('/api/mapping-templates', authMiddleware, mappingTemplateRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running...`);
