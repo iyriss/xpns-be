@@ -32,6 +32,16 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.put('/:id', async (req, res) => {
+  try {
+    await BankStatement.findByIdAndUpdate(req.params.id, req.body);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error updating bank statement:', error);
+    res.status(400).json({ error: 'Failed to update bank statement' });
+  }
+});
+
 router.get('/:id/transactions', async (req, res) => {
   try {
     const user = req.userId;

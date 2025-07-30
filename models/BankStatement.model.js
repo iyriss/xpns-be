@@ -10,6 +10,9 @@ const BankStatementSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    archived: {
+      type: Boolean,
+    },
   },
   { timestamps: true }
 );
